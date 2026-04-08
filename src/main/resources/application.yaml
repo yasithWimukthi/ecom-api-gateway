@@ -3,9 +3,29 @@ spring:
     name: api-gateway
   config:
     import: optional:configserver:http://host.docker.internal:8888
+  cloud:
+    gateway:
+      routes:
+        - id: USER-SERVICE
+          uri: lb://user-service
+          predicates:
+            - Path=/users,/users/**
+
+    loadbalancer:
+      health-check:
+        enabled: true
+      retry:
+        enabled: true
 
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+  endpoint:
+    gateway:
+      enabled: true
+eureka:
+  client:
+    service-url:
+      defaultZone: http://host.docker.internal:8761/eureka
